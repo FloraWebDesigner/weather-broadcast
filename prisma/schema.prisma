@@ -1,0 +1,48 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("SUPABASE_URL")
+}
+
+model broadcast {
+  id          Int       @id @default(autoincrement())
+  host        String
+  voice       Voice     @default(alloy)
+  province    Province  @default(Ontario)
+  date        DateTime  @default(now())
+  created_at  DateTime  @default(now())
+}
+
+enum Voice {
+  alloy
+  ash
+  coral
+  echo
+  fable
+  onyx
+  nova
+  sage
+  shimmer
+}
+
+enum Province{
+  Alberta
+  British_Columbia
+  Manitoba
+  New_Brunswick
+  Newfoundland_and_Labrador
+  Nova_Scotia
+  Ontario
+  Quebec
+  Saskatchewan
+  Prince_Edward_Island
+}
