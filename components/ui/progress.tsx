@@ -4,8 +4,9 @@ import * as React from "react";
 import * as ProgressPrimitive from "@radix-ui/react-progress";
 import { cn } from "@/lib/utils";
 
-interface ProgressProps extends React.ComponentPropsWithoutRef<typeof ProgressPrimitive.Root> {
-  label?: string; 
+interface ProgressProps
+  extends React.ComponentPropsWithoutRef<typeof ProgressPrimitive.Root> {
+  label?: string;
 }
 
 const Progress = React.forwardRef<
@@ -29,12 +30,12 @@ const Progress = React.forwardRef<
     </ProgressPrimitive.Root>
 
     {/* Progress Label */}
-    <div
-      className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-xs font-medium text-primary"
-      style={{ left: `${value}%` }} 
+    {/* <div
+      className="absolute left-1/2 transform -translate-x-1/2 text-xs font-medium text-background rounded-full bg-primary flex items-center justify-center"
+      style={{ left: `${value}%`, top: "-4rem", height: "3rem", width: "3rem" }}
     >
-      {label || `${value}%`} 
-    </div>
+      {label || `${value}%`}
+    </div> */}
   </div>
 ));
 Progress.displayName = ProgressPrimitive.Root.displayName;

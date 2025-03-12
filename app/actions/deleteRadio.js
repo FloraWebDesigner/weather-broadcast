@@ -11,5 +11,5 @@ export default async function deleteRadio(formData) {
             id: id,
         },
       });
-      revalidatePath('/');
+      revalidatePath('/playground');
     }
