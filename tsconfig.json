@@ -31,7 +31,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts"
-  ],
+, "app/actions/addRadio.ts", "app/actions/deleteRadio.ts"  ],
   "exclude": [
     "node_modules"
   ]

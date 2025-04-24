@@ -1,14 +1,21 @@
-import Weather from "@/components/api-weather"
-import { Progress } from "@/components/ui/progress"
+"use client"
+import Step from "@/components/step"
+import { VoiceTable } from "@/components/voice/voice-table";
+import { useFormStore } from '@/hooks/useFormStore';
+import { useRouter } from "next/navigation";
 
 export default function Voice() {
+  const router = useRouter();
+  const { updateFormData } = useFormStore();
 
+  const handleVoiceSelect = (voice: string) => {
+    updateFormData({ voice });
+    router.push("/playground"); 
+  };
     return(
-        <div className="voice">
-        <h1 className="text-3xl text-white font-bold text-center mb-3">Step 2: Select a Voice</h1>
-        <div className="my-3 w-1/2 mx-auto">
-        <Progress value={34} label="step 2"/>
-        </div>
-      </div>
+      <>
+      <Step title="Select a Voice" value={34} label="2/4" />
+      <VoiceTable onVoiceSelect={handleVoiceSelect} />
+</>
     )
 }

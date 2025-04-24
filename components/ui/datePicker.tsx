@@ -1,40 +1,51 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { format } from "date-fns"
-import { CalendarIcon } from "lucide-react"
+import * as React from "react";
+import { format } from "date-fns";
+import { CalendarIcon } from "lucide-react";
 
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import {Calendar} from "@/components/ui/calendar"
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover"
+} from "@/components/ui/popover";
 
-export function DatePickerDemo({ onDateChange }: { onDateChange: (date: string) => void }) {
+interface DatePickerDemoProps {
+  onDateChange: (date: string) => void;
+  className?: string;
+}
+
+export function DatePickerDemo({
+  onDateChange,
+  className,
+}: DatePickerDemoProps) {
   const [date, setDate] = React.useState<Date>(new Date());
   const [isPopoverOpen, setIsPopoverOpen] = React.useState(false);
 
+  if (typeof window === 'undefined') {
+    return <div className={className} />;
+  }
+
   React.useEffect(() => {
-    onDateChange(format(new Date(), "yyyy-MM-dd"))
+    onDateChange(format(new Date(), "yyyy-MM-dd"));
   }, [onDateChange]);
 
   const handleDateSelect = (selectedDate: Date | undefined) => {
-    setDate(selectedDate || new Date()) 
-    onDateChange(format(selectedDate || new Date(), "yyyy-MM-dd"))
+    setDate(selectedDate || new Date());
+    onDateChange(format(selectedDate || new Date(), "yyyy-MM-dd"));
     setIsPopoverOpen(false);
-  }
-
+  };
 
   return (
-    <Popover >
+    <Popover>
       <PopoverTrigger asChild>
         <Button
           variant={"outline"}
           className={cn(
-            "w-[240px] justify-start text-left font-normal",
+            "w-full h-10 justify-start text-left font-normal border border-slate-500",
             !date && "text-muted-foreground"
           )}
         >
@@ -47,11 +58,13 @@ export function DatePickerDemo({ onDateChange }: { onDateChange: (date: string) 
           mode="single"
           selected={date}
           onSelect={handleDateSelect}
-          disabled={(day: Date) => 
-        day < new Date() || day > new Date(Date.now() + 5 * 24 * 60 * 60 * 1000)}
+          disabled={(day: Date) =>
+            day < new Date() ||
+            day > new Date(Date.now() + 5 * 24 * 60 * 60 * 1000)
+          }
           initialFocus
         />
       </PopoverContent>
     </Popover>
-  )
+  );
 }
