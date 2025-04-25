@@ -5,6 +5,11 @@ export interface WeatherDataPoint {
   temp: number;   
   weatherMain: string; 
   weatherIcon: string; 
+  humidity: number;
+  windSpeed: number;
+  windDirection: number;
+  visibility: number;
+  pressure: number;
 }
 
 export interface CityWeather {
@@ -37,7 +42,12 @@ export async function fetchWeatherForecast(broadcasts: broadcast[]): Promise<Cit
       const sevenDayForecast = data.list.slice(0, 56).map((item: any) => ({
         dt_txt: item.dt_txt,
         temp: Math.round(item.main.temp), 
-        weatherMain: item.weather[0].main,
+        humidity:item.main.humidity,
+        windSpeed: item.wind.speed,
+        windDirection: item.wind.deg,
+        visibility: item.visibility,
+        pressure: item.main.pressure,
+        weatherMain: item.weather[0].description,
         weatherIcon: `https://openweathermap.org/img/wn/${item.weather[0].icon}.png`
       }));
 

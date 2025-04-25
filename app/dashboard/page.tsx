@@ -13,7 +13,7 @@ export default async function Dashboard() {
 
   return (
     <>
-      <Step title="Welcome to Weather Broadcast" value={100} label="✓" />
+      <Step title="Welcome to Weather Dashboard" value={100} label="✓" />
       <div>
         <WeatherForecastChart broadcasts={broadcasts} />
       </div>

@@ -67,44 +67,43 @@ export function WeatherForecastChart({ broadcasts }: WeatherChartProps) {
         })
       : [];
 
-      const generateXAxisTicks = (): string[] => {
-        if (!chartData || chartData.length === 0) return [];
-        
-        const ticks: string[] = [];
-        const daysToShow = 7;
-        const allDataPoints = forecastData[0]?.data || [];
-        
-        if (allDataPoints.length === 0) return [];
-        
-        // 获取第一个数据点的时间部分
-        const firstTime = allDataPoints[0].dt_txt.split(" ")[1];
-        const processedDates = new Set<string>();
-        
-        // 先收集所有符合条件的时间点
-        for (const point of allDataPoints) {
-          const [datePart, timePart] = point.dt_txt.split(" ");
-          
-          if (timePart === firstTime && !processedDates.has(datePart)) {
-            ticks.push(point.dt_txt);
-            processedDates.add(datePart);
-            
-            if (ticks.length >= daysToShow) break;
-          }
-        }
-        
-        const lastDayPoint = allDataPoints[allDataPoints.length - 1];
-        const lastDate = lastDayPoint.dt_txt.split(" ")[0];
-        
-        if (!processedDates.has(lastDate)) {
-          if (ticks.length < daysToShow) {
-            ticks.push(lastDayPoint.dt_txt);
-          } else {
-            ticks[daysToShow - 1] = lastDayPoint.dt_txt;
-          }
-        }
-        
-        return ticks.slice(0, daysToShow);
-      };
+  const generateXAxisTicks = (): string[] => {
+    if (!chartData || chartData.length === 0) return [];
+
+    const ticks: string[] = [];
+    const daysToShow = 7;
+    const allDataPoints = forecastData[0]?.data || [];
+
+    if (allDataPoints.length === 0) return [];
+
+    const firstTime = allDataPoints[0].dt_txt.split(" ")[1];
+    const processedDates = new Set<string>();
+
+    // 先收集所有符合条件的时间点
+    for (const point of allDataPoints) {
+      const [datePart, timePart] = point.dt_txt.split(" ");
+
+      if (timePart === firstTime && !processedDates.has(datePart)) {
+        ticks.push(point.dt_txt);
+        processedDates.add(datePart);
+
+        if (ticks.length >= daysToShow) break;
+      }
+    }
+
+    const lastDayPoint = allDataPoints[allDataPoints.length - 1];
+    const lastDate = lastDayPoint.dt_txt.split(" ")[0];
+
+    if (!processedDates.has(lastDate)) {
+      if (ticks.length < daysToShow) {
+        ticks.push(lastDayPoint.dt_txt);
+      } else {
+        ticks[daysToShow - 1] = lastDayPoint.dt_txt;
+      }
+    }
+
+    return ticks.slice(0, daysToShow);
+  };
 
   const colors = ["#8884d8", "#82ca9d", "#ffc658", "#ff8042", "#0088FE"];
 
@@ -116,41 +115,41 @@ export function WeatherForecastChart({ broadcasts }: WeatherChartProps) {
   return (
     <Card className="mt-4">
       <CardHeader>
-        <CardTitle>7-Day Temperature Forecast</CardTitle>
+        <CardTitle>5-Day Temperature Forecast</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="h-[400px]">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart
               data={chartData}
-              margin={{ top: 5, right: 30, left: 20, bottom: 50 }}
+              margin={{ top: 5, right: 30, left: 20, bottom: 20 }}
             >
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis
-  dataKey="fullDate"
-  ticks={generateXAxisTicks()}
-  tickFormatter={(value) => {
-    if (!value) return "";
-    try {
-      const date = new Date(value);
-      return format(date, "MM/dd HH:mm");
-    } catch (error) {
-      const [datePart, timePart] = value.split(" ");
-      const [year, month, day] = datePart.split("-");
-      const [hour] = timePart.split(":");
-      return `${month}/${day} ${hour}:00`;
-    }
-  }}
-  tick={{
-    fontSize: 12,
-    dy: 20,
-    fill: "#666",
-  }}
-  height={100}
-  interval={0}
-  angle={0}
-  minTickGap={20}
-/>
+                dataKey="fullDate"
+                ticks={generateXAxisTicks()}
+                tickFormatter={(value) => {
+                  if (!value) return "";
+                  try {
+                    const date = new Date(value);
+                    return format(date, "MM/dd HH:mm");
+                  } catch (error) {
+                    const [datePart, timePart] = value.split(" ");
+                    const [year, month, day] = datePart.split("-");
+                    const [hour] = timePart.split(":");
+                    return `${month}/${day} ${hour}:00`;
+                  }
+                }}
+                tick={{
+                  fontSize: 12,
+                  dy: 20,
+                  fill: "#666",
+                }}
+                height={100}
+                interval={0}
+                angle={0}
+                minTickGap={20}
+              />
               <YAxis
                 label={{
                   value: "Temperature (°C)",
