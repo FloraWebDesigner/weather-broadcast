@@ -6,6 +6,7 @@ import { revalidatePath } from "next/cache"
 interface FormState {
   error?: string
   success?: boolean
+  audioUrl?: string
 }
 
 const prisma = new PrismaClient()

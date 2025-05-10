@@ -2,10 +2,13 @@
 
 import { PrismaClient, Province, Voice } from "@prisma/client"
 import { revalidatePath } from "next/cache"
+import { generateEnglishBroadcast } from "@/components/api-prompt"
+import { fetchWeatherForecast } from "@/components/dashboard/weather-service"
 
 interface FormState {
   error?: string;
   success?: boolean;
+  audioUrl?: string;
 }
 
 const prisma = new PrismaClient()
@@ -43,14 +46,16 @@ export default async function addRadio(
       }
     })
     
-    revalidatePath('/')
-    return { success: true }
-  } catch (error) {
-    console.error('Database error:', error)
+   
+
+    revalidatePath('/');
     return { 
-      error: error instanceof Error 
-        ? error.message 
-        : 'Failed to create broadcast' 
-    }
+      success: true
+    };
+  } catch (error) {
+    console.error('Error:', error);
+    return { 
+      error: error instanceof Error ? error.message : 'Failed to create broadcast' 
+    };
   }
 }

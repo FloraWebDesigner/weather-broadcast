@@ -1,10 +1,10 @@
-import { broadcast, Province } from "@prisma/client";
+import { Province } from "@prisma/client";
 
 export interface WeatherDataPoint {
   dt_txt: string; 
   temp: number;   
   weatherMain: string; 
-  weatherIcon: string; 
+  weatherIcon?: string; 
   humidity: number;
   windSpeed: number;
   windDirection: number;
@@ -14,15 +14,17 @@ export interface WeatherDataPoint {
 
 export interface CityWeather {
   city: string;   
-  data: WeatherDataPoint[];
+  data: WeatherDataPoint[]; 
 }
 
 export const kelvinToCelsius = (kelvin: number) => Math.round(kelvin - 273.15);
 
-/**
- * get weather forecast for the next 7 days
- */
-export async function fetchWeatherForecast(broadcasts: broadcast[]): Promise<CityWeather[]> {
+export interface WeatherBroadcastInput {
+  province: Province | string; // Make it accept both enum and string
+  [key: string]: any; // Allow other properties
+}
+
+export async function fetchWeatherForecast(broadcasts: WeatherBroadcastInput[]): Promise<CityWeather[]> {
 
   const uniqueProvinces = Array.from(
     new Set(broadcasts.map(b => b.province))

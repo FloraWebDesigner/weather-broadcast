@@ -79,7 +79,7 @@ export function WeatherForecastChart({ broadcasts }: WeatherChartProps) {
     const firstTime = allDataPoints[0].dt_txt.split(" ")[1];
     const processedDates = new Set<string>();
 
-    // 先收集所有符合条件的时间点
+
     for (const point of allDataPoints) {
       const [datePart, timePart] = point.dt_txt.split(" ");
 

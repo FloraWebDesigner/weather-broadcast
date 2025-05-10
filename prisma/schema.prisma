@@ -11,6 +11,7 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("SUPABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model broadcast {
@@ -20,6 +21,8 @@ model broadcast {
   province    Province  @default(Ontario)
   date        DateTime  @default(now())
   created_at  DateTime  @default(now())
+  audioUrl  String?
+  lastAudioUpdate DateTime? @default(now())
 }
 
 enum Voice {

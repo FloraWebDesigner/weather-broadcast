@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { Voice, Province } from ".prisma/client";
+import { Province } from ".prisma/client";
 import { ClientWrapper } from "@/components/playground/playground-client-wrapper";
 
 const prisma = new PrismaClient();

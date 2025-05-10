@@ -18,6 +18,7 @@ interface RadioListProps {
 interface FormState {
   error?: string;
   success?: boolean;
+  audioUrl?: string;
 }
 
 function formatProvince(province: Province): string {

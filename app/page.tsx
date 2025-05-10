@@ -3,13 +3,18 @@ import Step from "@/components/step";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useFormStore } from '@/hooks/useFormStore';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function Home() {
   const router = useRouter();
-  const { formData, updateFormData } = useFormStore();
+  const { formData, updateFormData, clearFormData } = useFormStore();
   const [host, setHost] = useState(formData.host || '');
+
+  useEffect(() => {
+    clearFormData(); 
+  }, [])
+
   const handleSubmit = () => {
     updateFormData({ host });
     router.push("/voice"); 
