@@ -23,7 +23,7 @@ interface WeatherChartProps {
 interface ChartDataPoint {
   date: string;
   fullDate: string;
-  [key: string]: any; // 其他动态属性
+  [key: string]: any; 
 }
 
 export function WeatherForecastChart({ broadcasts }: WeatherChartProps) {

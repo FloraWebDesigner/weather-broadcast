@@ -61,7 +61,7 @@ export function VoiceSSRCards({
           }}
         >
           <img
-            src={`/${voice.toLowerCase()}.jpg`}
+            src={`/${voice}.jpg`}
             alt={voice}
             className="w-full h-full object-cover shadow-inner"
           />

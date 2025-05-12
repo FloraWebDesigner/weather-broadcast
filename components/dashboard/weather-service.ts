@@ -29,12 +29,12 @@ export async function fetchWeatherForecast(broadcasts: WeatherBroadcastInput[]):
   const uniqueProvinces = Array.from(
     new Set(broadcasts.map(b => b.province))
   );
-
+const weatherKey = process.env.NEXT_PUBLIC_OPEN_WEATHER || process.env.OPEN_WEATHER;
   const weatherPromises = uniqueProvinces.map(async (province) => {
     try {
       const formattedProvince = province.replace(/_/g, " ");
       const response = await fetch(
-        `https://api.openweathermap.org/data/2.5/forecast?q=${formattedProvince}&units=metric&appid=${process.env.NEXT_PUBLIC_OPEN_WEATHER}`
+        `https://api.openweathermap.org/data/2.5/forecast?q=${formattedProvince}&units=metric&appid=${weatherKey}`
       );
       
       if (!response.ok) throw new Error(`Weather API error: ${response.status}`);

@@ -174,7 +174,7 @@ export default function RadioList({ radios, provinceOptions }: RadioListProps) {
           <div className="flex items-center">
             <motion.div className="w-12 h-12 rounded-full overflow-hidden">
               <img
-                src={`/${radio.voice.toLowerCase()}.jpg`}
+                src={`/${radio.voice}.jpg`}
                 alt={radio.voice}
                 className="w-full h-full object-cover"
               />
