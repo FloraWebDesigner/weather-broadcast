@@ -228,47 +228,51 @@ export default function AutoBroadcastPlayer() {
         onPause={() => setIsPlaying(false)}
         style={{ display: "none" }}
       />
-      
-     <Button
-  onClick={() => {
-    if (audioReady) {
-      if (isPlaying) {
-        audioRef.current?.pause();
-      } else {
-        audioRef.current?.play().catch(console.error);
-      }
-    } else if (!audioLoading) {
-      setCurrentIndex(currentIndex);
-    }
-  }}
-  disabled={audioLoading}
-  className="bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 w-1/5 text-white shadow-lg hover:shadow-2xl transition-shadow"
->
-  {audioLoading ? (
-    <div className="flex items-center gap-2">
-      <Loader2 className="h-4 w-4 animate-spin" />
-      Generating audio...
-    </div>
-  ) : isPlaying ? "Pause" : "Play Broadcast"}
-</Button>
 
-      <div className="relative w-full max-w-xs mx-auto h-64 overflow-hidden">
+      <Button
+        onClick={() => {
+          if (audioReady) {
+            if (isPlaying) {
+              audioRef.current?.pause();
+            } else {
+              audioRef.current?.play().catch(console.error);
+            }
+          } else if (!audioLoading) {
+            setCurrentIndex(currentIndex);
+          }
+        }}
+        disabled={audioLoading}
+        className="bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 w-1/5 text-white shadow-lg hover:shadow-2xl transition-shadow"
+      >
+        {audioLoading ? (
+          <div className="flex items-center gap-2">
+            <Loader2 className="h-4 w-4 animate-spin" />
+            Generating audio...
+          </div>
+        ) : isPlaying ? (
+          "Pause"
+        ) : (
+          "Play Broadcast"
+        )}
+      </Button>
+
+      <div className="relative w-full max-w-xs mx-auto h-64">
         <div className="absolute inset-0 flex flex-col items-center justify-start gap-1">
           <AnimatePresence initial={false}>
             {broadcasts.map((broadcast, index) => {
               const position = index - currentIndex;
               const isCurrent = index === currentIndex;
-              
+
               return (
                 <motion.div
                   key={broadcast.id}
                   className="w-full px-4 py-1 text-center"
                   initial={{ y: 20, opacity: 0 }}
-                  animate={{ 
+                  animate={{
                     y: 0,
                     opacity: 1,
                     fontWeight: isCurrent ? 600 : 400,
-                    fontSize: isCurrent ? "1.3rem" : "1rem"
+                    fontSize: isCurrent ? "1.3rem" : "1rem",
                   }}
                   exit={{ y: -20, opacity: 0 }}
                   transition={{ duration: 0.3 }}
@@ -278,14 +282,21 @@ export default function AutoBroadcastPlayer() {
                   }}
                 >
                   <div>
-                    <p className={isCurrent ? "font-bold text-lg" : "text-base"}>
+                    <p
+                      className={isCurrent ? "font-bold text-lg" : "text-base"}
+                    >
                       {broadcast.host}
                     </p>
-                    <p className={isCurrent ? "text-base" : "text-sm text-gray-500"}>
+                    <p
+                      className={
+                        isCurrent ? "text-base" : "text-sm text-gray-500"
+                      }
+                    >
                       {new Date(broadcast.date).toLocaleDateString("en-US", {
                         month: "short",
                         day: "numeric",
-                      })} • {broadcast.province.replace(/_/g, " ")}
+                      })}{" "}
+                      • {broadcast.province.replace(/_/g, " ")}
                     </p>
                   </div>
                 </motion.div>
