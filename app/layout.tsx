@@ -32,12 +32,12 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ThemeProvider
-            attribute="class"
-            defaultTheme="dark"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <SidebarProvider>
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <SidebarProvider>
             <AppSidebar />
             <main className="container mx-auto p-4">
               <SidebarTrigger />
@@ -45,7 +45,7 @@ export default function RootLayout({
               {children}
             </main>
           </SidebarProvider>
-          </ThemeProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

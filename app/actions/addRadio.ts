@@ -19,22 +19,17 @@ export default async function addRadio(
 ): Promise<FormState> {
   try {
     const host = formData.get('host')?.toString()
-    const rawVoice = formData.get('voice')?.toString()
+    const voice = formData.get('voice')?.toString()
     const rawProvince = formData.get('province')?.toString()
     const date = formData.get('date')?.toString()
 
-    if (!host || !rawVoice || !rawProvince || !date) {
+    if (!host || !voice || !rawProvince || !date) {
       return { error: 'All fields are required' }
     }
 
     const province = rawProvince.replace(/ /g, "_") as Province
     if (!Object.values(Province).includes(province)) {
       return { error: 'Invalid province value' }
-    }
-
-    const voice = rawVoice as Voice
-    if (!Object.values(Voice).includes(voice)) {
-      return { error: 'Invalid voice value' }
     }
 
     await prisma.broadcast.create({

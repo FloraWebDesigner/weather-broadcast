@@ -17,7 +17,7 @@ datasource db {
 model broadcast {
   id          Int       @id @default(autoincrement())
   host        String
-  voice       Voice     @default(alloy)
+  voice       String
   province    Province  @default(Ontario)
   date        DateTime  @default(now())
   created_at  DateTime  @default(now())

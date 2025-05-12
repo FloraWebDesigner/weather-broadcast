@@ -2,7 +2,7 @@
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 
-export function VoiceTableRow({ 
+export function VoiceSSRTableRow({ 
   voice, 
   onSelect 
 }: { 

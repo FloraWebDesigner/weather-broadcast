@@ -9,6 +9,9 @@ import {
   fetchWeatherForecast,
   CityWeather,
 } from "../dashboard/weather-service";
+import { AnimatePresence, motion } from "framer-motion";
+import { Button } from "../ui/button";
+import { Loader2 } from "lucide-react";
 
 export default function AutoBroadcastPlayer() {
   const {
@@ -32,14 +35,25 @@ export default function AutoBroadcastPlayer() {
   const [error, setError] = useState<string | null>(null);
   const [audioLoading, setAudioLoading] = useState(false);
   const [audioReady, setAudioReady] = useState(false);
+  const [isReadyForErrors, setIsReadyForErrors] = useState(false);
   const abortControllerRef = useRef<AbortController | null>(null);
+  const [showAudioPlayer, setShowAudioPlayer] = useState(false);
 
   const showError = (message: string) => {
+    if (!isReadyForErrors) return;
     setError(message);
     setTimeout(() => setError(null), 5000);
   };
 
-  // Fetch weather data when broadcasts are loaded
+  useEffect(() => {
+    if (!broadcastsLoading && !weatherLoading) {
+      const timer = setTimeout(() => {
+        setIsReadyForErrors(true);
+      }, 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [broadcastsLoading, weatherLoading]);
+
   useEffect(() => {
     if (broadcasts.length > 0) {
       const loadWeatherData = async () => {
@@ -66,7 +80,6 @@ export default function AutoBroadcastPlayer() {
     }
   }, [broadcastsLoading, weatherLoading]);
 
-  // Generate audio prompt when data is available
   useEffect(() => {
     if (
       broadcasts.length > 0 &&
@@ -84,7 +97,6 @@ export default function AutoBroadcastPlayer() {
         return;
       }
 
-      // Cancel any pending request
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
       }
@@ -108,9 +120,9 @@ export default function AutoBroadcastPlayer() {
           }
 
           const response = await fetch(
-            `https://api.voicerss.org/?key=${apiKey}&hl=en-us&src=${encodeURIComponent(
-              weatherReport
-            )}`,
+            `https://api.voicerss.org/?key=${apiKey}&hl=en-us&v=${
+              currentBroadcast.voice
+            }&src=${encodeURIComponent(weatherReport)}`,
             {
               signal: abortControllerRef.current?.signal,
             }
@@ -192,50 +204,96 @@ export default function AutoBroadcastPlayer() {
 
   return (
     <div className="flex flex-col items-center justify-center h-64 gap-4">
-      {error && (
+      {isReadyForErrors && error && (
         <Alert variant="destructive" className="mb-4">
           <AlertTitle>Error</AlertTitle>
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
 
-      {showLoading ? (
-        <div className="flex flex-col items-center space-y-4">
-          <Skeleton className="h-6 w-1/2" />
-          <Skeleton className="h-4 w-2/3" />
-          <Skeleton className="h-4 w-1/3" />
-        </div>
-      ) : (
-        <>
-          <div className="text-center">
-            <h2 className="text-lg font-semibold">
-              Now playing: {broadcasts[currentIndex].host}'s broadcast
-            </h2>
-            {audioLoading && (
-              <p className="text-sm text-muted-foreground mt-2">
-                Generating audio...
-              </p>
-            )}
-          </div>
+      <audio
+        ref={audioRef}
+        src={audioSrc || undefined}
+        onCanPlay={handleCanPlay}
+        onLoadedData={handleAudioLoaded}
+        onCanPlayThrough={handleAudioLoaded}
+        onEnded={() => {
+          handleBroadcastEnded();
+        }}
+        onError={() => {
+          showError("Audio playback failed");
+          handleBroadcastEnded();
+        }}
+        onPlay={() => setIsPlaying(true)}
+        onPause={() => setIsPlaying(false)}
+        style={{ display: "none" }}
+      />
+      
+     <Button
+  onClick={() => {
+    if (audioReady) {
+      if (isPlaying) {
+        audioRef.current?.pause();
+      } else {
+        audioRef.current?.play().catch(console.error);
+      }
+    } else if (!audioLoading) {
+      setCurrentIndex(currentIndex);
+    }
+  }}
+  disabled={audioLoading}
+  className="bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 w-1/5 text-white shadow-lg hover:shadow-2xl transition-shadow"
+>
+  {audioLoading ? (
+    <div className="flex items-center gap-2">
+      <Loader2 className="h-4 w-4 animate-spin" />
+      Generating audio...
+    </div>
+  ) : isPlaying ? "Pause" : "Play Broadcast"}
+</Button>
 
-          <audio
-            ref={audioRef}
-            src={audioSrc || undefined}
-            controls
-            onCanPlay={handleCanPlay}
-            onLoadedData={handleAudioLoaded}
-            onCanPlayThrough={handleAudioLoaded}
-            onEnded={handleBroadcastEnded}
-            onError={() => {
-              showError("Audio playback failed");
-              handleBroadcastEnded();
-            }}
-            onPlay={() => setIsPlaying(true)}
-            onPause={() => setIsPlaying(false)}
-            hidden={!userInteracted || !audioReady}
-          />
-        </>
-      )}
+      <div className="relative w-full max-w-xs mx-auto h-64 overflow-hidden">
+        <div className="absolute inset-0 flex flex-col items-center justify-start gap-1">
+          <AnimatePresence initial={false}>
+            {broadcasts.map((broadcast, index) => {
+              const position = index - currentIndex;
+              const isCurrent = index === currentIndex;
+              
+              return (
+                <motion.div
+                  key={broadcast.id}
+                  className="w-full px-4 py-1 text-center"
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ 
+                    y: 0,
+                    opacity: 1,
+                    fontWeight: isCurrent ? 600 : 400,
+                    fontSize: isCurrent ? "1.3rem" : "1rem"
+                  }}
+                  exit={{ y: -20, opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                  style={{
+                    order: index,
+                    zIndex: isCurrent ? 10 : 1,
+                  }}
+                >
+                  <div>
+                    <p className={isCurrent ? "font-bold text-lg" : "text-base"}>
+                      {broadcast.host}
+                    </p>
+                    <p className={isCurrent ? "text-base" : "text-sm text-gray-500"}>
+                      {new Date(broadcast.date).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                      })} • {broadcast.province.replace(/_/g, " ")}
+                    </p>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </AnimatePresence>
+        </div>
+      </div>
     </div>
   );
 }

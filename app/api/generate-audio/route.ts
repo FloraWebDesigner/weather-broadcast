@@ -2,7 +2,6 @@ import { PrismaClient } from "@prisma/client";
 import { fetchWeatherForecast } from "@/components/dashboard/weather-service"
 import { generateEnglishBroadcast } from "@/components/api-prompt"
 
-
 const prisma = new PrismaClient();
 
 export async function POST(req: Request) {

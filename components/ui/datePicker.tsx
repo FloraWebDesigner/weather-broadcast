@@ -25,7 +25,7 @@ export function DatePickerDemo({
   const [date, setDate] = React.useState<Date>(new Date());
   const [isPopoverOpen, setIsPopoverOpen] = React.useState(false);
 
-  if (typeof window === 'undefined') {
+  if (typeof window === "undefined") {
     return <div className={className} />;
   }
 
@@ -60,7 +60,7 @@ export function DatePickerDemo({
           onSelect={handleDateSelect}
           disabled={(day: Date) =>
             day < new Date() ||
-            day > new Date(Date.now() + 5 * 24 * 60 * 60 * 1000)
+            day > new Date(Date.now() + 4 * 24 * 60 * 60 * 1000)
           }
           initialFocus
         />

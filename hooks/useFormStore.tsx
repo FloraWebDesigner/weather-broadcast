@@ -11,24 +11,34 @@ export type FormData = {
 
 export function useFormStore() {
   const [formData, setFormData] = useState<FormData>({});
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    setIsMounted(true);
     const saved = localStorage.getItem("multiStepFormData");
     if (saved) {
-      setFormData(JSON.parse(saved));
+      try {
+        setFormData(JSON.parse(saved));
+      } catch (e) {
+        console.error("Failed to parse form data", e);
+      }
     }
   }, []);
 
   const updateFormData = (newData: Partial<FormData>) => {
     const updated = { ...formData, ...newData };
     setFormData(updated);
-    localStorage.setItem("multiStepFormData", JSON.stringify(updated));
+    if (isMounted) {
+      localStorage.setItem("multiStepFormData", JSON.stringify(updated));
+    }
   };
 
   const clearFormData = () => {
     setFormData({});
-    localStorage.removeItem("multiStepFormData");
+    if (isMounted) {
+      localStorage.removeItem("multiStepFormData");
+    }
   };
 
-  return { formData, updateFormData, clearFormData };
+  return { formData, updateFormData, clearFormData, isMounted }; // 确保返回 isMounted
 }

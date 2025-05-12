@@ -30,19 +30,17 @@ export const generateEnglishBroadcast = (
   if (!cityWeather?.data?.length) {
     return "Weather data not available";
   }
-
+  console.log("cityWeather", cityWeather);
   const targetDate = broadcastDate ? new Date(broadcastDate) : new Date();
-
-
+  console.log("targetDate", targetDate);
   const { noon, evening } = getDayPeriodWeather(cityWeather.data, targetDate);
-
+  console.log("noon weather :", noon, "evening weather :", evening);
   if (!noon || !evening) {
     return "Weather data not available for required times";
   }
-  
-  const current = noon; 
-  const next6h = evening; 
 
+  const current = noon;
+  const next6h = evening;
 
   const dt_txt = current.dt_txt || new Date().toISOString();
   const weatherMain = current.weatherMain || "unknown conditions";
@@ -54,6 +52,12 @@ export const generateEnglishBroadcast = (
       hour: "2-digit",
       minute: "2-digit",
       hour12: true,
+    });
+    const currentDate = new Date(dt_txt).toLocaleDateString("en-US", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     });
 
     const windDir = getEnglishWindDirection(current.windDirection);
@@ -67,7 +71,7 @@ export const generateEnglishBroadcast = (
 
     return `${greeting}! This is your weather update for ${
       cityWeather.city
-    } as of ${currentTime}.
+    } on ${currentDate}, as of ${currentTime}.
 
 Currently, we're experiencing ${weatherMain} with temperatures at ${temp}°C. Winds are coming from the ${windDir} at ${
       current.windSpeed
@@ -102,29 +106,26 @@ Residents should ${
   }
 };
 
-
 export const generateWeatherBroadcasts = (
   cityWeather: CityWeather,
   hostName: string,
   broadcastDate: string
 ) => {
   return {
-    en: generateEnglishBroadcast(cityWeather, hostName,broadcastDate ),
-
+    en: generateEnglishBroadcast(cityWeather, hostName, broadcastDate),
   };
 };
 
-
-const getDayPeriodWeather = (data: CityWeather['data'], date: Date) => {
-  const targetDateStr = date.toISOString().split('T')[0]; 
+const getDayPeriodWeather = (data: CityWeather["data"], date: Date) => {
+  const targetDateStr = date.toISOString().split("T")[0];
   const noonTime = `${targetDateStr} 12:00:00`;
-  const noonWeather = data.find(item => item.dt_txt.includes(noonTime));
+  const noonWeather = data.find((item) => item.dt_txt.includes(noonTime));
 
   const eveningTime = `${targetDateStr} 18:00:00`;
-  const eveningWeather = data.find(item => item.dt_txt.includes(eveningTime));
+  const eveningWeather = data.find((item) => item.dt_txt.includes(eveningTime));
 
   return {
     noon: noonWeather || null,
-    evening: eveningWeather || null
+    evening: eveningWeather || null,
   };
 };

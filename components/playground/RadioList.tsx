@@ -9,6 +9,9 @@ import { broadcast, Province } from ".prisma/client";
 import { useFormStore } from "@/hooks/useFormStore";
 import { useToast } from "@/hooks/use-toast";
 import { Toaster } from "@/components/ui/toaster";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { motion } from "framer-motion";
 
 interface RadioListProps {
   radios: broadcast[];
@@ -29,7 +32,7 @@ export default function RadioList({ radios, provinceOptions }: RadioListProps) {
   const [isClient, setIsClient] = useState(false);
   const [state, formAction] = useActionState<FormState, FormData>(addRadio, {});
   const [selectedDate, setSelectedDate] = useState(
-    format(new Date(), "yyyy-MM-dd")
+    new Date().toISOString().split("T")[0]
   );
   const { formData } = useFormStore();
   const { toast } = useToast();
@@ -93,70 +96,117 @@ export default function RadioList({ radios, provinceOptions }: RadioListProps) {
   return (
     <section className="mt-8 w-3/4 mx-auto">
       <Toaster />
-      <form action={formAction} className="flex gap-2 w-full">
-        <input type="hidden" name="host" value={formData.host || ""} />
-        <input type="hidden" name="voice" value={formData.voice || ""} />
-        <select
-          name="province"
-          className="rounded shadow border py-2 px-3 border-slate-500 w-2/5"
-          required
-          defaultValue=""
-        >
-          <option value="" disabled>
-            Select province
-          </option>
-          {provinceOptions.map((province) => (
-            <option key={province} value={formatProvince(province)}>
-              {formatProvince(province)}
-            </option>
-          ))}
-        </select>
-        <div className="w-2/5">
-          <DatePickerDemo
-            onDateChange={setSelectedDate}
-            className="h-10 py-2 px-3 border border-slate-500 rounded shadow w-full"
-          />
-          <input
-            type="date"
-            name="date"
-            className="rounded shadow border py-2 px-3 hidden border-slate-500"
-            value={selectedDate}
-            onChange={(e) => setSelectedDate(e.target.value)}
-            required
-          />
-        </div>
-        <button
-          type="submit"
-          className="w-1/5 bg-green-500 py-2 px-4 rounded font-bold hover:border-green-700"
-        >
-          Add Radio
-        </button>
-      </form>
+      <div className="w-full flex gap-4 items-center">
+        <form action={formAction} className="flex gap-4 w-full">
+          <input type="hidden" name="host" value={formData.host || ""} />
+          <input type="hidden" name="voice" value={formData.voice || ""} />
 
-      <ul className="mt-4">
-        {radios.map((radio) => (
-          <li
-            key={radio.id}
-            className="flex justify-between items-center border border-slate-700 text-white py-2 px-3 rounded mb-2"
+          <motion.div className="w-2/5">
+            <select
+              name="province"
+              className="rounded-lg shadow-md border-0 py-2 px-3 bg-white dark:bg-gray-800 w-full focus:ring-2 focus:ring-purple-500 focus:outline-none transition-all"
+              required
+              defaultValue=""
+            >
+              <option value="" disabled className="text-gray-400">
+                Select province
+              </option>
+              {provinceOptions.map((province) => (
+                <option
+                  key={province}
+                  value={formatProvince(province)}
+                  className="py-2"
+                >
+                  {formatProvince(province)}
+                </option>
+              ))}
+            </select>
+          </motion.div>
+
+          <motion.div className="w-2/5">
+            <DatePickerDemo
+              onDateChange={setSelectedDate}
+              className="h-16 border-0 shadow-md rounded-lg py-2 px-4 w-full bg-white dark:bg-gray-800"
+            />
+            <input
+              type="date"
+              name="date"
+              className="hidden"
+              value={selectedDate}
+              onChange={(e) => setSelectedDate(e.target.value)}
+              required
+            />
+          </motion.div>
+
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="w-1/5"
           >
-            <div>
-              <span className="mr-2">
-                {format(new Date(radio.date), "MMM-dd")}
+            <Button
+              type="submit"
+              className="bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 w-full h-10 text-white shadow-lg hover:shadow-xl transition-all"
+            >
+              Add Radio
+            </Button>
+          </motion.div>
+        </form>
+
+        <motion.div
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className="w-1/6"
+        >
+          <Link href="/radio" className="block">
+            <Button className="bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 w-full h-10 text-white shadow-lg hover:shadow-xl transition-all">
+              Generate
+            </Button>
+          </Link>
+        </motion.div>
+      </div>
+
+      <ul className="mt-6 space-y-3">
+        {radios.map((radio) => (
+          <motion.li
+            key={radio.id}
+            className="flex justify-between items-center bg-white dark:bg-gray-800/70 rounded-xl shadow-md px-4 py-2"
+          >
+          <div className="flex items-center">
+            <motion.div className="w-12 h-12 rounded-full overflow-hidden">
+              <img
+                src={`/${radio.voice.toLowerCase()}.jpg`}
+                alt={radio.voice}
+                className="w-full h-full object-cover"
+              />
+            </motion.div>
+
+            <div className="ml-16 text-gray-800 dark:text-gray-200 font-medium">
+              <span className="mr-16">
+                {new Date(radio.date).toLocaleDateString("en-US", {
+                  month: "short",
+                  day: "numeric",
+                  timeZone: "UTC",
+                })}
               </span>
               <span>{formatProvince(radio.province)}</span>
             </div>
-            <div>
-              <form action={handleDelete}>
-                <input type="hidden" name="id" value={radio.id} />
-                <button
+          </div>
+
+            <form action={handleDelete}>
+              <input type="hidden" name="id" value={radio.id} />
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Button
                   type="submit"
-                  className="bg-red-500 py-2 px-4 rounded font-bold hover:bg-red-700"
+                  className="px-8 py-2 bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white shadow-md hover:shadow-lg transition-all"
                 >
                   Delete
-                </button>
-              </form>
-            </div>
-          </li>
+                </Button>
+              </motion.div>
+            </form>
+          </motion.li>
         ))}
       </ul>
     </section>
