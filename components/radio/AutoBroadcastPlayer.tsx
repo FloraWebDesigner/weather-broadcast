@@ -295,6 +295,7 @@ export default function AutoBroadcastPlayer() {
                       {new Date(broadcast.date).toLocaleDateString("en-US", {
                         month: "short",
                         day: "numeric",
+                        timeZone: "UTC",
                       })}{" "}
                       • {broadcast.province.replace(/_/g, " ")}
                     </p>
