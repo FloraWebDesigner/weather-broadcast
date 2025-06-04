@@ -55,7 +55,7 @@ export default function RadioPage() {
             events: {
               onhover: {
                 enable: true,
-                mode: "repulse", // 鼠标悬停时星星散开
+                mode: "repulse", 
               },
             },
           },

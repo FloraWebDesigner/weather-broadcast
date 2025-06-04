@@ -8,8 +8,19 @@ import { useRouter } from "next/navigation";
 
 export default function Home() {
   const router = useRouter();
-  const { formData, updateFormData, isMounted } = useFormStore();
+  const { formData, updateFormData, isMounted,setIsMounted, resetFormData } = useFormStore();
   const [host, setHost] = useState("");
+
+useEffect(() => {
+  const hasVisited = sessionStorage.getItem("hasVisitedForm");
+
+  if (!hasVisited) {
+    resetFormData(); 
+    sessionStorage.setItem("hasVisitedForm", "true"); 
+  }
+  setIsMounted(true); 
+}, []);
+
 
   useEffect(() => {
     if (isMounted) {

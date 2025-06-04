@@ -1,4 +1,5 @@
 "use client";
+import { create } from "zustand";
 import { useState, useEffect } from "react";
 
 export type FormData = {
@@ -7,38 +8,57 @@ export type FormData = {
   province?: string;
   date?: string;
   audioUrl?: string;
+  radios?: Array<{ id: string; date: string }>;
 };
 
-export function useFormStore() {
-  const [formData, setFormData] = useState<FormData>({});
-  const [isMounted, setIsMounted] = useState(false);
+interface FormState {
+  formData: FormData;
+  isMounted: boolean;
+  setIsMounted: (mounted: boolean) => void;
+  updateFormData: (data: Partial<FormData>) => void;
+  resetFormData: () => void;
+  clearFormData: () => void;
+}
 
-  useEffect(() => {
-    setIsMounted(true);
-    const saved = localStorage.getItem("multiStepFormData");
-    if (saved) {
-      try {
-        setFormData(JSON.parse(saved));
-      } catch (e) {
-        console.error("Failed to parse form data", e);
-      }
-    }
-  }, []);
-
-  const updateFormData = (newData: Partial<FormData>) => {
-    const updated = { ...formData, ...newData };
-    setFormData(updated);
-    if (isMounted) {
+export const formStore = create<FormState>((set) => ({
+  formData:
+    typeof window !== "undefined" && localStorage.getItem("multiStepFormData")
+      ? JSON.parse(localStorage.getItem("multiStepFormData")!)
+      : {},
+  isMounted: false,
+  setIsMounted: (mounted) => set({ isMounted: mounted }),
+  updateFormData: (newData) =>
+    set((state) => {
+      const updated = { ...state.formData, ...newData };
       localStorage.setItem("multiStepFormData", JSON.stringify(updated));
-    }
-  };
+      return { formData: updated };
+    }),
+  resetFormData: () => {
+    localStorage.removeItem("multiStepFormData");
+    set({ formData: {} });
+  },
+  clearFormData: () => {
+    localStorage.removeItem("multiStepFormData");
+    set({ formData: {} });
+  },
+}));
 
-  const clearFormData = () => {
-    setFormData({});
-    if (isMounted) {
-      localStorage.removeItem("multiStepFormData");
-    }
-  };
+export function useFormStore() {
+  const {
+    formData,
+    updateFormData,
+    resetFormData,
+    clearFormData,
+    isMounted,
+    setIsMounted,
+  } = formStore();
 
-  return { formData, updateFormData, clearFormData, isMounted }; // 确保返回 isMounted
+  return {
+    formData,
+    updateFormData,
+    resetFormData,
+    clearFormData,
+    isMounted,
+    setIsMounted,
+  };
 }
