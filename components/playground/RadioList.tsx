@@ -37,6 +37,14 @@ export default function RadioList({ radios, provinceOptions }: RadioListProps) {
   const { formData } = useFormStore();
   const { toast } = useToast();
 
+useEffect(() => {
+  console.log('Radios data:', {
+    source: 'props',
+    ids: radios.map(r => r.id),
+    types: radios.map(r => typeof r.id)
+  })
+}, [radios])
+
   useEffect(() => {
     if (state?.error) {
       toast({
@@ -70,6 +78,7 @@ export default function RadioList({ radios, provinceOptions }: RadioListProps) {
   }
 
   const handleDelete = async (formData: FormData) => {
+    console.log('Deleting ID:', formData.get('id'), 'Type:', typeof formData.get('id'))
     try {
       const result = await deleteRadio({}, formData);
       if (result?.error) {
@@ -193,7 +202,7 @@ export default function RadioList({ radios, provinceOptions }: RadioListProps) {
           </div>
 
             <form action={handleDelete}>
-              <input type="hidden" name="id" value={radio.id} />
+              <input type="hidden" name="id" value={radio.id.toString()} />
               <motion.div
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}

@@ -15,30 +15,24 @@ export default async function deleteRadio(
   prevState: FormState,  
   formData: FormData     
 ): Promise<FormState> {
+  const id = formData.get('id')
+  if (!id) return { error: 'Missing ID' }
+  
   try {
-    const id = formData.get('id')?.toString()
-    
-    if (!id) {
-      return { error: 'ID is required' }
-    }
-
-    const parsedId = parseInt(id)
-    if (isNaN(parsedId)) {
-      return { error: 'Invalid ID format' }
-    }
-
-    await prisma.broadcast.delete({
-      where: { id: parsedId }
+    const existing = await prisma.broadcast.findUnique({
+      where: { id: id.toString() }
     })
-
+    
+    if (!existing) {
+      console.warn(`Record ${id} not found`)
+      return { error: 'Record not found' }
+    }
+    
+    await prisma.broadcast.delete({ where: { id: id.toString() } })
     revalidatePath('/')
     return { success: true }
   } catch (error) {
-    console.error('Delete error:', error)
-    return { 
-      error: error instanceof Error 
-        ? error.message 
-        : 'Failed to delete broadcast' 
-    }
+    console.error('Delete failed:', error)
+    return { error: 'Deletion failed' }
   }
 }

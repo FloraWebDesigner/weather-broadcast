@@ -15,7 +15,7 @@ datasource db {
 }
 
 model broadcast {
-  id          Int       @id @default(autoincrement())
+  id String @id @default(uuid()) 
   host        String
   voice       String
   province    Province  @default(Ontario)
@@ -23,18 +23,6 @@ model broadcast {
   created_at  DateTime  @default(now())
   audioUrl  String?
   lastAudioUpdate DateTime? @default(now())
-}
-
-enum Voice {
-  alloy
-  ash
-  coral
-  echo
-  fable
-  onyx
-  nova
-  sage
-  shimmer
 }
 
 enum Province{

@@ -1,9 +1,7 @@
 'use server'
 
-import { PrismaClient, Province, Voice } from "@prisma/client"
+import { PrismaClient, Province } from "@prisma/client"
 import { revalidatePath } from "next/cache"
-import { generateEnglishBroadcast } from "@/components/api-prompt"
-import { fetchWeatherForecast } from "@/components/dashboard/weather-service"
 
 interface FormState {
   error?: string;
